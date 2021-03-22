@@ -16,6 +16,7 @@ class UserList extends StatefulWidget {
 }
 
 class _UserListState extends State<UserList> {
+  // TODO: move to reusable widget
   ScrollController _scrollController;
   UsersCubit _usersCubit;
 
@@ -24,13 +25,14 @@ class _UserListState extends State<UserList> {
     _scrollController = ScrollController();
     _scrollController.addListener(_handleScroll);
     _usersCubit = BlocProvider.of<UsersCubit>(context);
-    super.initState();
     _usersCubit.fetchUsers();
+    super.initState();
   }
 
   @override
   void dispose() {
     _scrollController.removeListener(_handleScroll);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -43,7 +45,12 @@ class _UserListState extends State<UserList> {
   Future<void> _handleScroll() async {
     if (_scrollController.position.maxScrollExtent ==
         _scrollController.offset) {
-      await _usersCubit.fetchUsers();
+      try {
+        await _usersCubit.fetchUsers();
+      } catch (e) {
+        // TODO: handle error
+        _scrollController.removeListener(_handleScroll);
+      }
     }
   }
 
