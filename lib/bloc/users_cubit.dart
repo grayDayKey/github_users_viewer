@@ -12,13 +12,9 @@ class UsersCubit extends Cubit<UnmodifiableListView<User>> {
   UsersCubit(this._api) : super(UnmodifiableListView(List<User>.empty()));
 
   Future<void> fetchUsers() async {
-    // try {
+    // TODO: handle error
     final users = await _api.getUsers(_lastUserId);
     _lastUserId = users.last.id;
-    print(users);
     emit(UnmodifiableListView([...state, ...users]));
-    // } catch (e) {
-    //   print(e);
-    // }
   }
 }
